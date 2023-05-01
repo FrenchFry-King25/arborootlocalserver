@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='icon' href='data:,'>
+    <style>
+        body {
+            font-family: Verdana;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .button {
+            background-color: #1aa744;
+            border-radius: 25px;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .button2 {
+            background-color: #d33b3b;
+            border-radius: 25px;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body id='page'>
+    <h1>Robo Nano Web Server</h1>
+    <p>Built in LED
+    <a id='ledOFF' onclick='ledON()' style='display:none' ><button  class='button2'>OFF</button></a></p>
+    <a id='ledON' onclick='ledOFF()'><button  class='button'>ON</button></a></p>
+    <p>Distance: <span id='distance' style='font-weight: 900;'>00</span>cm</p>
+</body>
+
+<script>    
+    const socket = new WebSocket('ws://' + window.location.hostname + ':8080/');
+
+    socket.addEventListener('open', function (event) {
+        console.log('opened communication');
+    });
+
+    socket.addEventListener('message', function (message) {
+        console.log('msg: ' + message.data);
+        var msg = message.data.split(':');
+        if(msg[0] == 'distance') {
+            document.getElementById('distance').innerHTML = msg[1];            
+        } else if (msg[0] == 'led' && msg[1] == 'off') {
+            document.getElementById('ledON').style.display = 'none';
+            document.getElementById('ledOFF').style.display = 'block';
+        } else if (msg[0] == 'led' && msg[1] == 'on') {
+            document.getElementById('ledOFF').style.display = 'none';
+            document.getElementById('ledON').style.display = 'block';
+        } else if (msg[0] == 'button' && msg[1] == 'closed') {
+            document.getElementById('page').style.backgroundColor = '#4c8bd3';
+        } else if (msg[0] == 'button' && msg[1] == 'open') {
+            document.getElementById('page').style.backgroundColor = 'white';
+        }
+    });
+
+    function ledOFF() {
+        socket.send('led:off');
+    };
+
+    function ledON() {
+        socket.send('led:on');
+    };
+</script>
+</html>

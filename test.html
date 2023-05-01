@@ -1,66 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        #page {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-        }
+<html>
 
-        button {
-            background: white;
-            border-radius: 15px;
+<head>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='icon' href='data:,'>
+    <style>
+        #square {
+            position: absolute;
+            top: 600px;
+            left: 30px;
             width: 50px;
             height: 50px;
-            font-weight: 900;
-            font-size: 16px;
-        } 
-
-        h1 {
-            font-family: verdana;
+            background-color: red;
+            text-align: center;
+            color: white;
+            border-radius: 10%;
+            margin: auto;
         }
     </style>
 </head>
-<body id="page">
-    <h1 id="dataPrint">hello</h1>
-    
-    <div class="buttonContainer">
-        <button onclick="sendMessageOn()">ON</button>
-        <button onclick="sendMessageOff()">OFF</button>
-    </div>
-   
-    <script>
-        console.log("hello")
-        
-        const socket = new WebSocket('wss://arboroot.com');
 
-        socket.addEventListener('open', function (event) {
-            console.log('opened communication');
-        })
-
-        socket.addEventListener('message', function (event) {
-            console.log("msg: " + event.data);
-            document.getElementById("dataPrint").innerHTML = "button is " + event.data;
-            if(event.data == "CLICKED") {
-                document.getElementById("page").style.backgroundColor = "#ed6464";
-            } else {
-                document.getElementById("page").style.backgroundColor = "white";
-            }
-        })
-
-        function sendMessageOn () {
-            socket.send("on")
-        }
-
-        function sendMessageOff () {
-            socket.send("off")
-        }
-        
-    </script>
+<body id='page'>
+    <div id="square">arbo</div>
 </body>
+
+<script>
+
+    var light = false;
+
+    const socket = new WebSocket('ws://localhost:80/');
+
+    socket.addEventListener('open', function (event) {
+        console.log('opened communication');
+    });
+
+    socket.addEventListener('message', function (message) {
+        console.log('msg: ' + message.data);
+        var msg = message.data.split(':');
+        if (msg[0] == '1') {
+            document.getElementById('square').style.left = scale(msg[1], window.innerWidth - 50) + "px";
+        } else if (msg[0] == '2') {
+            document.getElementById('square').style.top = scale(msg[1], window.innerHeight - 50) + "px";
+        } else if (msg[0] == '3' && msg[1] == '0') {
+            document.getElementById('square').style.backgroundColor = "red";
+        } else if (msg[0] == '3' && msg[1] == '1') {
+            document.getElementById('square').style.backgroundColor = "black";
+        }
+    });
+
+    document.body.onkeyup = function (e) {
+        if (e.key == " " ||
+            e.code == "Space" ||
+            e.keyCode == 32
+        ) {
+            if(light){socket.send("on");}
+            else {socket.send("off");}
+            light = !light;
+        }
+    }
+
+    function scale(number, outMax) {
+        return (number) * (outMax) / (1023);
+    }
+</script>
+
 </html>

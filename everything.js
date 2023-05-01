@@ -1,4 +1,4 @@
-const comPath = "COM23" //set this
+const comPath = "COM24" //set this
 
 const express = require('express');
 const app = express();
@@ -48,16 +48,16 @@ wss.on('connection', function connection(ws) {
 
 
     var t = 0;
-    setInterval(() => {
-        if(t > 10 && t < 21) {
-            p = (t - 10) * 5
-            ws.send("PRO" + p);
-        } else if(t > 34 && t < 45) {
-            p = ((t - 34) * 5) + 50;
-            ws.send("PRO" + p);
-        } if(t == 48) {t = 0}
-        t++;
-    }, 500)
+    // setInterval(() => {
+    //     if(t > 10 && t < 21) {
+    //         p = (t - 10) * 5
+    //         ws.send("PRO" + p);
+    //     } else if(t > 34 && t < 45) {
+    //         p = ((t - 34) * 5) + 50;
+    //         ws.send("PRO" + p);
+    //     } if(t == 48) {t = 0}
+    //     t++;
+    // }, 500)
 })
 
 
@@ -69,19 +69,19 @@ socket.addEventListener('open', function (event) {
     });
 
     var t = 0;
-    setInterval(() => {
-        if(t > 10 && t < 21) {
-            p = (t - 10) * 5
-            socket.send("PRO" + p);
-        } else if(t > 34 && t < 45) {
-            p = ((t - 34) * 5) + 50;
-            socket.send("PRO" + p);
-        } if(t == 48) {
-            t = 0;
-            socket.send("PRO" + 00);
-        }
-        t++;
-    }, 500)
+    // setInterval(() => {
+    //     if(t > 10 && t < 21) {
+    //         p = (t - 10) * 5
+    //         socket.send("PRO" + p);
+    //     } else if(t > 34 && t < 45) {
+    //         p = ((t - 34) * 5) + 50;
+    //         socket.send("PRO" + p);
+    //     } if(t == 48) {
+    //         t = 0;
+    //         socket.send("PRO" + 00);
+    //     }
+    //     t++;
+    // }, 500)
 })
 
 app.get("/", (req, res) => {
@@ -90,8 +90,8 @@ app.get("/", (req, res) => {
 
 //SETTING UP SERIAL MONITOR CONNECTION - read from arduino
 //VIEW CODE localhost:3000 (you can change the number)
-server.listen(3000, () => {
-    console.log('Server listening on port 3000');
+server.listen(80, () => {
+    console.log('Server listening on port 80');
 });
 
 
